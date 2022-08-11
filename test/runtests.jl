@@ -1,6 +1,6 @@
-using PNDE2
+using MyODESolver
 using Test
 
-@testset "PNDE2.jl" begin
+@testset "MyODESolver.jl" begin
     # Write your tests here.
 end
