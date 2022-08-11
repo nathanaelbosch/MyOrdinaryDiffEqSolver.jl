@@ -11,6 +11,7 @@ import OrdinaryDiffEq as ODE
 # Algorithm
 ############################################################################################
 struct MyAlg <: ODE.OrdinaryDiffEqAdaptiveAlgorithm end
+export MyAlg
 ODE.alg_order(alg::MyAlg) = 1
 ODE.isfsal(::MyAlg) = false
 ODE.isadaptive(::MyAlg) = false

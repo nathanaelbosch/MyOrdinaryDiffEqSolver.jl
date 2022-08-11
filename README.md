@@ -14,7 +14,6 @@ In a nutshell, define:
 ## Example
 ```
 using MyOrdinaryDiffEqSolver, Plots
-import MyOrdinaryDiffEqSolver: MyAlg
 
 # Define ODEProblem
 function f(du, u, p, t)
