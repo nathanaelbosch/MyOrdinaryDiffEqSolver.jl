@@ -12,7 +12,7 @@ In a nutshell, define:
 - `MyInterpolation` to handle the interpolation
 
 ## Example
-```
+```julia
 using MyOrdinaryDiffEqSolver, Plots
 
 # Define ODEProblem
