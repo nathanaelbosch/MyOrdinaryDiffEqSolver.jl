@@ -40,7 +40,7 @@ function ODE.alg_cache(
     calck,
     ::Val{IIP},
 ) where {IIP,uEltypeNoUnits,uBottomEltypeNoUnits,tTypeNoUnits}
-    @debug "alg_cache"
+    @info "alg_cache"
     du = similar(u)
     tmp = similar(u)
     return MyCache(du, tmp)
@@ -50,7 +50,7 @@ end
 # Actual solver: Initialization and step
 ############################################################################################
 function ODE.initialize!(integ, cache::MyCache)
-    @debug "initialize!"
+    @info "initialize!"
 end
 function ODE.perform_step!(integ, cache::MyCache, repeat_step = false)
     @unpack du, u, f, p, t, dt = integ
@@ -68,6 +68,7 @@ end
 # Customizing other calls (optional)
 ############################################################################################
 function ODE.postamble!(integ::ODE.ODEIntegrator{<:MyAlg})
+    @info "postamble!"
     ODE._postamble!(integ)
 end
 function DiffEqBase.savevalues!(
@@ -75,6 +76,7 @@ function DiffEqBase.savevalues!(
     force_save = false,
     reduce_size = true,
 )
+    @debug "savevalues!"
     out = ODE._savevalues!(integ, force_save, reduce_size)
 end
 
@@ -140,7 +142,7 @@ function SciMLBase.build_solution(
     destats = nothing,
     kwargs...,
 )
-    @debug "build_solution"
+    @info "build_solution"
     T = eltype(eltype(u))
 
     if prob.u0 === nothing
@@ -224,7 +226,7 @@ DiffEqBase.interp_summary(interp::MyInterpolation) = "My custom interpolation"
 end
 
 (interp::MyInterpolation)(tvals, idxs, deriv, p, continuity::Symbol = :left) = begin
-    @debug "called MyInterpolation()"
+    @info "called MyInterpolation()"
     @unpack ts = interp
     tdir = sign(ts[end] - ts[begin])
     idx = sortperm(tvals, rev = tdir < 0)
