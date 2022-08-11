@@ -7,14 +7,21 @@ using SciMLBase
 @reexport using OrdinaryDiffEq
 import OrdinaryDiffEq as ODE
 
-
+############################################################################################
+# Algorithm
+############################################################################################
 struct MyAlg <: ODE.OrdinaryDiffEqAdaptiveAlgorithm end
+ODE.alg_order(alg::MyAlg) = 1
+ODE.isfsal(::MyAlg) = false
+ODE.isadaptive(::MyAlg) = false
 
-mutable struct MyCache <: ODE.OrdinaryDiffEqCache
-    tmp::Any
+############################################################################################
+# Cache
+############################################################################################
+mutable struct MyCache{uT} <: ODE.OrdinaryDiffEqCache
+    du::uT
+    tmp::uT  # without `tmp` it errors
 end
-
-
 function ODE.alg_cache(
     alg::MyAlg,
     u,
@@ -32,30 +39,33 @@ function ODE.alg_cache(
     calck,
     ::Val{IIP},
 ) where {IIP,uEltypeNoUnits,uBottomEltypeNoUnits,tTypeNoUnits}
-    @info "alg_cache"
-    return MyCache(copy(u))
+    @debug "alg_cache"
+    du = similar(u)
+    tmp = similar(u)
+    return MyCache(du, tmp)
 end
-ODE.alg_order(alg::MyAlg) = 1
-ODE.isfsal(::MyAlg) = false
-ODE.isadaptive(::MyAlg) = false
 
+############################################################################################
+# Actual solver: Initialization and step
+############################################################################################
 function ODE.initialize!(integ, cache::MyCache)
-    @info "initialize!"
-    # integ.kshortsize = 2
-    # resize!(integ.k, integ.kshortsize)
-    # integ.k = typeof(integ.k)(undef, integ.kshortsize)
-    # integ.k = [(x)->1/x, rand(20)]
-    # @assert integ.opts.dense == false
+    @debug "initialize!"
 end
-
 function ODE.perform_step!(integ, cache::MyCache, repeat_step = false)
     @unpack du, u, f, p, t, dt = integ
-    du = copy(u)
+    @unpack du = cache
     f(du, u, p, t)
     integ.destats.nf += 1
     @. u = u + dt * du
+    if integ.opts.adaptive
+        # compute some error estimate here
+        # integ.EEst =
+    end
 end
 
+############################################################################################
+# Solution and Interpolation
+############################################################################################
 struct MyODESolution{T,N,uType,uType2,DType,tType,rateType,P,A,IType,DE} <:
        SciMLBase.AbstractODESolution{T,N,uType}
     u::uType
@@ -115,7 +125,7 @@ function SciMLBase.build_solution(
     destats = nothing,
     kwargs...,
 )
-    @info "build_solution"
+    @debug "build_solution"
     T = eltype(eltype(u))
 
     if prob.u0 === nothing
@@ -199,7 +209,7 @@ DiffEqBase.interp_summary(interp::MyInterpolation) = "My custom interpolation"
 end
 
 (interp::MyInterpolation)(tvals, idxs, deriv, p, continuity::Symbol = :left) = begin
-    @info "called MyInterpolation()"
+    @debug "called MyInterpolation()"
     @unpack ts = interp
     tdir = sign(ts[end] - ts[begin])
     idx = sortperm(tvals, rev = tdir < 0)
