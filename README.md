@@ -13,7 +13,8 @@ In a nutshell, define:
 
 ## Example
 ```
-using MyODESolver, Plots
+using MyOrdinaryDiffEqSolver, Plots
+import MyOrdinaryDiffEqSolver: MyAlg
 
 # Define ODEProblem
 function f(du, u, p, t)
@@ -27,9 +28,9 @@ p = (0.2, 0.2, 3.0)
 prob = ODEProblem(f, u0, tspan, p)
 
 # Initializing the integrator works as usual
-integ = init(prob, MyODESolver.MyAlg(), adaptive = false, dt = 1e-2, dense = false);
+integ = init(prob, MyAlg(), adaptive = false, dt = 1e-2, dense = false);
 # Solving as well
-sol = solve(prob, MyODESolver.MyAlg(), adaptive = false, dt = 1e-2, dense = false);
+sol = solve(prob, MyAlg(), adaptive = false, dt = 1e-2, dense = false);
 
 # `MyODESolution` subtypes `AbstractODESolution` and can do the things you expect it to do
 sol.t, sol.u

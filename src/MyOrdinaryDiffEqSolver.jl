@@ -1,4 +1,4 @@
-module MyODESolver
+module MyOrdinaryDiffEqSolver
 
 using UnPack
 using Reexport

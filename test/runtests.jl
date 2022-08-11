@@ -1,6 +1,6 @@
-using MyODESolver
+using MyOrdinaryDiffEqSolver
 using Test
 
-@testset "MyODESolver.jl" begin
+@testset "MyOrdinaryDiffEqSolver.jl" begin
     # Write your tests here.
 end

@@ -1,4 +1,4 @@
-name = "MyODESolver"
+name = "MyOrdinaryDiffEqSolver"
 uuid = "11863c26-d94c-46b3-ac93-7cf6dfac5bfd"
 authors = ["Nathanael Bosch <nathanael.bosch@uni-tuebingen.de> and contributors"]
 version = "0.1.0"
