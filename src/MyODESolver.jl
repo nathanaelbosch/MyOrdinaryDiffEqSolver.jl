@@ -56,7 +56,7 @@ function ODE.perform_step!(integ, cache::MyCache, repeat_step = false)
     @. u = u + dt * du
 end
 
-struct MyODESolution{T,N,uType,uType2,DType,tType, rateType, P,A, IType, DE} <:
+struct MyODESolution{T,N,uType,uType2,DType,tType,rateType,P,A,IType,DE} <:
        SciMLBase.AbstractODESolution{T,N,uType}
     u::uType
     u_analytic::uType2
@@ -177,18 +177,16 @@ end
 
 function SciMLBase.solution_new_retcode(sol::MyODESolution{T,N}, retcode) where {T,N}
     return MyODESolution{T,N}(
-        sol.u, sol.u_analytic, sol.errors, sol.t,
-        sol.k,
-        sol.prob, sol.alg,
-        sol.interp,
-        # sol.dense, sol.tslocation,
-        sol.destats, retcode)
+        sol.u, sol.u_analytic, sol.errors, sol.t, sol.k, sol.prob, sol.alg, sol.interp,
+        sol.dense, sol.tslocation, sol.destats, retcode,
+    )
 end
 
 struct MyInterpolation <: DiffEqBase.AbstractDiffEqInterpolation
     ts::Any
     timeseries::Any
 end
+DiffEqBase.interp_summary(interp::MyInterpolation) = "My custom interpolation"
 
 (interp::MyInterpolation)(tval::Number, idxs, deriv, p, continuity::Symbol = :left) = begin
     @debug "called MyInterpolation(::Number)"
