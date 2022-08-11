@@ -65,6 +65,20 @@ function ODE.perform_step!(integ, cache::MyCache, repeat_step = false)
 end
 
 ############################################################################################
+# Customizing other calls (optional)
+############################################################################################
+function ODE.postamble!(integ::ODE.ODEIntegrator{<:MyAlg})
+    ODE._postamble!(integ)
+end
+function DiffEqBase.savevalues!(
+    integ::ODE.ODEIntegrator{<:MyAlg},
+    force_save = false,
+    reduce_size = true,
+)
+    out = ODE._savevalues!(integ, force_save, reduce_size)
+end
+
+############################################################################################
 # Solution and Interpolation
 ############################################################################################
 struct MyODESolution{T,N,uType,uType2,DType,tType,rateType,P,A,IType,DE} <:
